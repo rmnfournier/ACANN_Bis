@@ -11,4 +11,6 @@ A naive implementation in MatLab of the Maximum Entropy method. This can be used
 
 3. Data   
 
-Contains a script that can generate data used to train and test neural networks.  4. Deep Learning  The methods used to train, save and use a Neural Network. 
+Contains a script that can generate data used to train and test neural networks.  
+
+4. Deep Learning  The methods used to train, save and use a Neural Network. 
