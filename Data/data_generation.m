@@ -216,7 +216,7 @@ end
 %% Save the data
 dlmwrite(strcat('../Data/G_',output,'.csv'),G,'-append','delimiter',',')
 dlmwrite(strcat('../Data/nl_',output,'.csv'),nl,'-append','delimiter',',')
-dlmwrite(strcat('../Data/A_',output,'.csv'),A,'-append','delimiter',',')
+dlmwrite(strcat('../Data/A_',output,'.csv'),A./sum(A,2),'-append','delimiter',',')
 %For maxent, the convention is different.
 dlmwrite(strcat('../Data/Spect_in'),[omega(:),A(1,:)'],'-append','delimiter',' ')
 for ii=1:length(nl(:,1))
