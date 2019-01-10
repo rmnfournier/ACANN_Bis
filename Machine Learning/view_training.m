@@ -2,10 +2,10 @@
 % 3334  -> [2]
 % 2247  -> [1 1]
 % 3344 -> [2 2]
+close all
+parameters = sort([38304,5544,9968,18912,157568,346752]);%[2243,3334,5516,9880,18608,36064
 
-parameters = sort([2243,3334,5516,9880,18608]);%[2243,3334,5516,9880,18608,36064
-
-datas=[100,1000];
+datas=[100,1000,10000];
 f=figure(1);
  hold on
 colors=lines(length(parameters));
@@ -19,18 +19,14 @@ for data = datas
     for p = parameters
         %% Visualize training
         if(exist("MAE_validation_"+int2str(data)+"data_"+int2str(p)+"parameters.csv"))
-            p_txt=[p_txt p p p p];
+            p_txt=[p_txt p p ];
             val=importdata("MAE_validation_"+int2str(data)+"data_"+int2str(p)+"parameters.csv");
             tr=importdata("MAE_training_"+int2str(data)+"data_"+int2str(p)+"parameters.csv");
 
             %% training and validation loss
-            loglog(tr(:,1),tr(:,2),'-','color',colors(c,:))
-            loglog(val(:,1),val(:,2),'--','color',colors(c,:))
-            loglog(val(:,1),repmat(val(end,2),length(val(:,1)),1),'color',colors(c,:))
-            loglog(tr(:,1),repmat(tr(end,2),length(tr(:,1)),1),'color',colors(c,:))
+            loglog(tr(:,1),movmean(tr(:,2),100),'-','color',colors(c,:))
+            loglog(val(:,1),movmean(val(:,2),100),'--','color',colors(c,:))
 
-            xlim([0,5e5]);
-            ylim([1.5e-4,1e-3]);
             c=c+1;
         end
     end
