@@ -19,7 +19,7 @@ folder = "../MaxEnt/harm_osc/"; % Folder in which the files are
 filename_prefix = "simulation"; % Prefix (common to all files)
 nb_timesteps = 31 ; % The total number of timesteps
 %3 Legendre parameters
-NB_GLs = [8,16,32]; % array of number of coefficients to test (to know how many of them we need)
+NB_GLs = [16,32,64]; % array of number of coefficients to test (to know how many of them we need)
 % No need to modify the next lines 
 mean_data=[];
 var_data=[];
@@ -36,23 +36,32 @@ for i=0:nb_timesteps
     tau=[tau,(tmp(:,1))];
 end
 if(check_plot)
-    subplot(1,2,2)
+    subplot(1,3,1)
     hold on
     errorbar(tau,mean_data,(var_data))
+    xlabel("\tau")
+    ylabel("C^i")
+    title("QMC simulation")
+    
+    subplot(1,3,3)
+    hold on
+    errorbar(tau,mean_data,(var_data))
+    title("Reconstruction")
 end
 
 %% Legendre transform 
 % We have the function C^i(\tau), but the neural networks take its legendre
 % coefficients as input. We need to get them. 
 for NB_GL = NB_GLs
-
-    nl_handler=@(l) trapz(linspace(0,1,nb_timesteps+1),mean_data.*legendreP(l,2*(linspace(0,1,nb_timesteps+1))-1));
+    % We need to integrate between -1 and 1, so we need to rescale tau
+    tau_rescaled = 2*(tau-tau(1))/(tau(end)-tau(1))-1;
+    nl_handler=@(l) trapz(tau_rescaled,mean_data.*legendreP(l,2*(linspace(0,1,nb_timesteps+1))-1));
     nl=zeros(NB_GL,1);
     for i  = (0:(NB_GL-1))
        nl(i+1)= nl_handler(i);
     end
     if(check_plot)
-        subplot(1,2,1)
+        subplot(1,3,2)
         plot(nl)
         xlabel("Coefficient")
         ylabel("G_l")
@@ -67,7 +76,7 @@ for NB_GL = NB_GLs
         c_i_reconstructed = c_i_reconstructed + nl(i+1)*legendreP(i,2*(linspace(0,1,nb_timesteps+1))-1);
     end
     if(check_plot)
-        subplot(1,2,2)
+        subplot(1,3,3)
         hold on
         plot(tau,c_i_reconstructed)
         xlabel("\tau")
@@ -77,6 +86,9 @@ for NB_GL = NB_GLs
 end
 %% Save the figure
 if(check_plot)
+    subplot(1,3,3)
+    legendCell = [{"QMC"} strcat('nb coefs =',string(num2cell(NB_GLs)))];
+    legend(legendCell,'Location','southwest')
     print_figure(f,save_folder+simulation_name+"_correlation",12,6);
 end
 
