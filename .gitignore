@@ -1,0 +1,8 @@
+
+Data/A_validation.csv
+*.csv
+*.pyc
+*.pth
+*.dat
+Data/Spect_in
+*.eps
