@@ -15,26 +15,35 @@ check_plot = true ; % True if we want to see the data
 simulation_name="harmonic_oscillator"; % for figure names
 save_folder = "harm_osc_results/"; % Folder in which we save the figures and coefficients
 %2 MonteCarlo
+test = false; % if true, we generate data from exponential
 folder = "../MaxEnt/harm_osc/"; % Folder in which the files are 
 filename_prefix = "simulation"; % Prefix (common to all files)
 nb_timesteps = 31 ; % The total number of timesteps
 %3 Legendre parameters
-NB_GLs = [16,32,64]; % array of number of coefficients to test (to know how many of them we need)
+NB_GLs = [4,8,16,32,64]; % array of number of coefficients to test (to know how many of them we need)
 % No need to modify the next lines 
 mean_data=[];
 var_data=[];
 tau=[];
-for i=0:nb_timesteps
-    filename=folder+filename_prefix+int2str(i)+".csv";
-    tmp=importdata(filename);
-    mean_data=[mean_data, tmp(:,2)];
-    if(length(tmp(1,:))<3)
-           var_data=[var_data,0];
-    else
-        var_data=[var_data,tmp(:,3)];
+
+if(~test)
+    for i=0:nb_timesteps
+        filename=folder+filename_prefix+int2str(i)+".csv";
+        tmp=importdata(filename);
+        mean_data=[mean_data, tmp(:,2)];
+        if(length(tmp(1,:))<3)
+               var_data=[var_data,0];
+        else
+            var_data=[var_data,tmp(:,3)];
+        end
+        tau=[tau,(tmp(:,1))];
     end
-    tau=[tau,(tmp(:,1))];
+else
+    tau=linspace(0,0.5,nb_timesteps+1);
+    mean_data=0.05*exp(-10*tau);
+    var_data=repmat(0.001,length(tau),1);
 end
+
 if(check_plot)
     subplot(1,3,1)
     hold on
@@ -55,7 +64,7 @@ end
 for NB_GL = NB_GLs
     % We need to integrate between -1 and 1, so we need to rescale tau
     tau_rescaled = 2*(tau-tau(1))/(tau(end)-tau(1))-1;
-    nl_handler=@(l) trapz(tau_rescaled,mean_data.*legendreP(l,2*(linspace(0,1,nb_timesteps+1))-1));
+    nl_handler=@(l) trapz(mean_data.*legendreP(l,tau_rescaled))*(tau_rescaled(2)-tau_rescaled(1));
     nl=zeros(NB_GL,1);
     for i  = (0:(NB_GL-1))
        nl(i+1)= nl_handler(i);
@@ -71,9 +80,10 @@ for NB_GL = NB_GLs
     %% Reconstruct the time correlation function from legendre coefficient
     % We want to make sure that we have "good" information about the original
     % function
+
     c_i_reconstructed = zeros(1,nb_timesteps+1);
     for i = 0 : NB_GL-1
-        c_i_reconstructed = c_i_reconstructed + nl(i+1)*legendreP(i,2*(linspace(0,1,nb_timesteps+1))-1);
+        c_i_reconstructed = c_i_reconstructed +(2*i+1)* nl(i+1)*legendreP(i,tau_rescaled)/2;
     end
     if(check_plot)
         subplot(1,3,3)
@@ -88,7 +98,7 @@ end
 if(check_plot)
     subplot(1,3,3)
     legendCell = [{"QMC"} strcat('nb coefs =',string(num2cell(NB_GLs)))];
-    legend(legendCell,'Location','southwest')
-    print_figure(f,save_folder+simulation_name+"_correlation",12,6);
+    legend(legendCell);
+    print_figure(f,save_folder+simulation_name+"_correlation",24,16);
 end
 
