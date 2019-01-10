@@ -3,9 +3,9 @@
 % 2247  -> [1 1]
 % 3344 -> [2 2]
 close all
-parameters = sort([38304,5544,9968,18912,157568,346752]);%[2243,3334,5516,9880,18608,36064
+parameters = sort([149768]);%[2243,3334,5516,9880,18608,36064
 
-datas=[100,1000,10000];
+datas=[1000];
 f=figure(1);
  hold on
 colors=lines(length(parameters));

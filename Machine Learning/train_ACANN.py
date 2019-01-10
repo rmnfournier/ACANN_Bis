@@ -10,15 +10,16 @@ import math
 
 from collections import deque
 
+
 nb_data = 1000
-epochs = 50000
+epochs = 25000
 #[1] [2] [4][8],[16],[32]
-architecture = [[8],[16]]
+architecture = [[128,128]]
 last_loss = deque(maxlen=5000)
 
 for archi,counter in zip(architecture,range(0,len(architecture))):
     print("Starting {}th ACANN for {} training data".format(counter,nb_data))
-    model = ACANN(64,1024,archi,drop_p=0.09).double()
+    model = ACANN(4,1024,archi,drop_p=0.09).double()
 
     print("Model created")
     # Import the data
@@ -26,7 +27,7 @@ for archi,counter in zip(architecture,range(0,len(architecture))):
     validation_data=Database(csv_target="../Data/A_validation.csv",csv_input="../Data/nl_validation.csv",nb_data=int(nb_data*0.1)).get_loader()
 
     trainloader = DataLoader(train_data,batch_size=int(nb_data),shuffle=True)
-    validationloader = DataLoader(validation_data,batch_size=int(nb_data*0.1))
+    validationloader = DataLoader(validation_data,batch_size=int(nb_data))
     print("Data Loaded")
 
 
