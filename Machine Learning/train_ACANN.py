@@ -11,7 +11,7 @@ import math
 from collections import deque
 
 
-nb_data = 1000
+nb_data = 100000
 epochs = 25000
 #[1] [2] [4][8],[16],[32]
 architecture = [[128,128]]
@@ -26,7 +26,7 @@ for archi,counter in zip(architecture,range(0,len(architecture))):
     train_data = Database(csv_target="../Data/A_training.csv",csv_input="../Data/nl_training.csv",nb_data=nb_data).get_loader()
     validation_data=Database(csv_target="../Data/A_validation.csv",csv_input="../Data/nl_validation.csv",nb_data=int(nb_data*0.1)).get_loader()
 
-    trainloader = DataLoader(train_data,batch_size=int(nb_data),shuffle=True)
+    trainloader = DataLoader(train_data,batch_size=int(nb_data/10),shuffle=True)
     validationloader = DataLoader(validation_data,batch_size=int(nb_data))
     print("Data Loaded")
 
@@ -52,7 +52,7 @@ for archi,counter in zip(architecture,range(0,len(architecture))):
 
     # Training parameters
     step=-1
-    print_every = 50
+    print_every = 500
     print("Starting the training")
     std=1e-9
     nb_parameters=model.count_parameters()
@@ -81,7 +81,8 @@ for archi,counter in zip(architecture,range(0,len(architecture))):
                 print("Epoch {}/{} : ".format(e+1,epochs),
                       "Training MAE = {} -".format(loss.item()),
                       "Validation MAE = {}".format(validation_score(model)))
-
+                torch.save(model.state_dict(),'checkpoint_archi_'+str(archi[0])+ '_1batch.pth')
+        
         with open("MAE_validation_"+str(nb_data)+"data_"+str(nb_parameters)+"parameters.csv",'a') as f:
             writer=csv.writer(f,delimiter=',')
             writer.writerow([str(e),str(validation_score(model))])
@@ -90,5 +91,4 @@ for archi,counter in zip(architecture,range(0,len(architecture))):
             writer.writerow([str(e),str(np.mean(mean_loss))])
 
     print("Final score for {} data is : {}".format(nb_data,validation_score(model)))
-    torch.save(model.state_dict(),'checkpoint_archi_3layers_'+str(archi[0])+ '_1batch.pth')
 
