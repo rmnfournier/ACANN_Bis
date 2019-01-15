@@ -14,17 +14,17 @@ from collections import deque
 nb_data = 100000
 epochs = 25000
 #[1] [2] [4][8],[16],[32]
-architecture = [[128,128]]
+architecture = [[256,256]]
 last_loss = deque(maxlen=5000)
 
 for archi,counter in zip(architecture,range(0,len(architecture))):
     print("Starting {}th ACANN for {} training data".format(counter,nb_data))
-    model = ACANN(4,1024,archi,drop_p=0.09).double()
+    model = ACANN(8,1024,archi,drop_p=0.09).double()
 
     print("Model created")
     # Import the data
-    train_data = Database(csv_target="../Data/A_training.csv",csv_input="../Data/nl_training.csv",nb_data=nb_data).get_loader()
-    validation_data=Database(csv_target="../Data/A_validation.csv",csv_input="../Data/nl_validation.csv",nb_data=int(nb_data*0.1)).get_loader()
+    train_data = Database(csv_target="../Data/A_training.csv",csv_input="../Data/G_training_reduced.csv",nb_data=nb_data).get_loader()
+    validation_data=Database(csv_target="../Data/A_validation.csv",csv_input="../Data/G_validation_reduced.csv",nb_data=int(nb_data*0.1)).get_loader()
 
     trainloader = DataLoader(train_data,batch_size=int(nb_data/10),shuffle=True)
     validationloader = DataLoader(validation_data,batch_size=int(nb_data))
@@ -82,7 +82,7 @@ for archi,counter in zip(architecture,range(0,len(architecture))):
                       "Training MAE = {} -".format(loss.item()),
                       "Validation MAE = {}".format(validation_score(model)))
                 torch.save(model.state_dict(),'checkpoint_archi_'+str(archi[0])+ '_1batch.pth')
-        
+
         with open("MAE_validation_"+str(nb_data)+"data_"+str(nb_parameters)+"parameters.csv",'a') as f:
             writer=csv.writer(f,delimiter=',')
             writer.writerow([str(e),str(validation_score(model))])
