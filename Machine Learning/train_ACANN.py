@@ -11,14 +11,16 @@ import math
 from collections import deque
 
 
-nb_data = 100000
+
+nb_data = 100
 epochs = 5000
 #[1] [2] [4][8],[16],[32]
-architecture = [[2048,2048]]
+architecture = [[1,1],[2,2],[4,4],[8,8],[16,16],[32,32],[64,64],[128,128],[256,256],[512,512]]
+
 last_loss = deque(maxlen=5000)
 
 for archi,counter in zip(architecture,range(0,len(architecture))):
-    print("Starting {}th ACANN for {} training data".format(counter,nb_data))
+    print("Starting {}th ACANN for {} training data".format(counter+1,nb_data))
     model = ACANN(8,1024,archi,drop_p=0.09).double()
 
     print("Model created")
@@ -81,6 +83,7 @@ for archi,counter in zip(architecture,range(0,len(architecture))):
                 print("Epoch {}/{} : ".format(e+1,epochs),
                       "Training MAE = {} -".format(loss.item()),
                       "Validation MAE = {}".format(validation_score(model)))
+
                 torch.save(model.state_dict(), 'checkpoint_data_'+str(nb_data)+'archi_'+str(archi[0])+'.pth')
 
         with open("MAE_validation_"+str(nb_data)+"data_"+str(nb_parameters)+"parameters.csv",'a') as f:
