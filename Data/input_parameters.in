@@ -1,9 +1,8 @@
 beta=1
-#inverse temperature
 output='validation'
 nb_data=1000
 nb_pics=4
-nb_gl=64
+nb_gl=4
 nb_tau=1024
 legendre_method='exact'
 example=0

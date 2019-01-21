@@ -12,9 +12,9 @@ from collections import deque
 
 
 nb_data = 100000
-epochs = 25000
+epochs = 5000
 #[1] [2] [4][8],[16],[32]
-architecture = [[256,256]]
+architecture = [[2048,2048]]
 last_loss = deque(maxlen=5000)
 
 for archi,counter in zip(architecture,range(0,len(architecture))):
@@ -81,7 +81,7 @@ for archi,counter in zip(architecture,range(0,len(architecture))):
                 print("Epoch {}/{} : ".format(e+1,epochs),
                       "Training MAE = {} -".format(loss.item()),
                       "Validation MAE = {}".format(validation_score(model)))
-                torch.save(model.state_dict(),'checkpoint_archi_'+str(archi[0])+ '_1batch.pth')
+                torch.save(model.state_dict(), 'checkpoint_data_'+str(nb_data)+'archi_'+str(archi[0])+'.pth')
 
         with open("MAE_validation_"+str(nb_data)+"data_"+str(nb_parameters)+"parameters.csv",'a') as f:
             writer=csv.writer(f,delimiter=',')

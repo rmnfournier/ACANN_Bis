@@ -12,18 +12,18 @@ from collections import deque
 
 
 nb_data = 100000
-first_epochs = int(25001)
-last_epochs = int(1e7)
+first_epochs = int(5001)
+last_epochs = int(10000)
 last_loss = deque(maxlen=5000)
-filename = 'checkpoint_archi_128_1batch.pth'
-archi = [128,128]
+filename = 'checkpoint_archi_256_10batch.pth'
+archi = [256,256]
 print("Restarting ACANN for {} training data".format(nb_data))
-model = ACANN(4,1024,archi,drop_p=0.09).double()
+model = ACANN(8,1024,archi,drop_p=0.09).double()
 model.load_state_dict(torch.load(filename))
 print("Model loaded")
 # Import the data
-train_data = Database(csv_target="../Data/A_training.csv",csv_input="../Data/nl_training.csv",nb_data=nb_data).get_loader()
-validation_data=Database(csv_target="../Data/A_validation.csv",csv_input="../Data/nl_validation.csv",nb_data=int(nb_data*0.1)).get_loader()
+train_data = Database(csv_target="../Data/A_training.csv",csv_input="../Data/G_training_reduced.csv",nb_data=nb_data).get_loader()
+validation_data=Database(csv_target="../Data/A_validation.csv",csv_input="../Data/G_validation_reduced.csv",nb_data=int(nb_data*0.1)).get_loader()
 
 trainloader = DataLoader(train_data,batch_size=int(nb_data/10),shuffle=True)
 validationloader = DataLoader(validation_data,batch_size=int(nb_data))
