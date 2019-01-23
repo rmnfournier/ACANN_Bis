@@ -8,7 +8,7 @@ beta=0.25;
 tau= linspace(0,beta,1024)';
 g_to_plot=[17,22,71,100];
 f=figure;
-replot=false;
+replot=true;
 
 %% Explain variance ratio
 if replot
@@ -71,6 +71,8 @@ if ~replot
 dlmwrite('figure1_ind_contr.csv',individual_contributions,'delimiter',',');
 dlmwrite('figure1_evr.csv',evr,'delimiter',',','precision','%.15f');
 dlmwrite('figure1_G.csv',G,'delimiter',',');
+dlmwrite('figure1_A.csv',A,'delimiter',',');
+
 dlmwrite('figure1_tau.csv',tau,'delimiter',',');
 dlmwrite('figure1_G_r.csv',G_r,'delimiter',',');
 end
