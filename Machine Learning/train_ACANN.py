@@ -12,21 +12,23 @@ from collections import deque
 
 
 
-nb_data = 100
-epochs = 5000
+nb_data = 500
+epochs = 10000
 #[1] [2] [4][8],[16],[32]
-architecture = [[1,1],[2,2],[4,4],[8,8],[16,16],[32,32],[64,64],[128,128],[256,256],[512,512]]
+#architecture = [[1,1],[2,2],[4,4],[8,8],[16,16],[32,32],[64,64]]
+architecture=[[16,16],[32,32],[64,64],[128,128],[256,256]]
+ncoef=3
 
 last_loss = deque(maxlen=5000)
 
 for archi,counter in zip(architecture,range(0,len(architecture))):
     print("Starting {}th ACANN for {} training data".format(counter+1,nb_data))
-    model = ACANN(8,1024,archi,drop_p=0.09).double()
+    model = ACANN(ncoef,1024,archi,drop_p=0.09).double()
 
     print("Model created")
     # Import the data
-    train_data = Database(csv_target="../Data/A_training.csv",csv_input="../Data/G_training_reduced.csv",nb_data=nb_data).get_loader()
-    validation_data=Database(csv_target="../Data/A_validation.csv",csv_input="../Data/G_validation_reduced.csv",nb_data=int(nb_data*0.1)).get_loader()
+    train_data = Database(csv_target="../Data/lennard_jones/A_training.csv",csv_input="../Data/lennard_jones/G_training_reduced.csv",nb_data=nb_data,nb_coefs=ncoef).get_loader()
+    validation_data=Database(csv_target="../Data/lennard_jones/A_validation.csv",csv_input="../Data/lennard_jones/G_validation_reduced.csv",nb_data=int(nb_data*0.1),nb_coefs=ncoef).get_loader()
 
     trainloader = DataLoader(train_data,batch_size=int(nb_data/10),shuffle=True)
     validationloader = DataLoader(validation_data,batch_size=int(nb_data))
